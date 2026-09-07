@@ -110,9 +110,20 @@ class AssociationResult:
     candidates: tuple[MappingCandidate, ...]
     status: str
     provenance: dict[str, Any]
+    ambiguous_sources: tuple[str, ...] = ()
 
     def for_source(self, source_element_id: str) -> tuple[MappingCandidate, ...]:
         return tuple(candidate for candidate in self.candidates if candidate.source_element_id == source_element_id)
+
+    def is_ambiguous(self, source_element_id: str) -> bool:
+        """Say whether this one source could not be told apart, not whether any could.
+
+        Retaining runners-up for inspection is not the same claim as being
+        unable to choose. A caller asking about one step needs the margin that
+        was actually measured for that step.
+        """
+
+        return source_element_id in self.ambiguous_sources
 
 
 def _candidate(source: InterfaceElement, target: InterfaceElement) -> MappingCandidate:
@@ -183,7 +194,7 @@ def associate_interfaces(
     if not 0.0 <= min_score <= 1.0 or not 0.0 <= ambiguity_margin <= 1.0:
         raise ValueError("thresholds must be between zero and one")
     candidates: list[MappingCandidate] = []
-    ambiguous = False
+    ambiguous_sources: list[str] = []
     matched_sources = 0
     for source_element in source.elements:
         ranked = sorted(
@@ -196,11 +207,11 @@ def associate_interfaces(
         matched_sources += 1
         candidates.extend(viable[:3])
         if len(viable) > 1 and viable[0].score - viable[1].score < ambiguity_margin:
-            ambiguous = True
+            ambiguous_sources.append(source_element.element_id)
 
     if not candidates:
         status = "NO_MATCH"
-    elif ambiguous:
+    elif ambiguous_sources:
         status = "AMBIGUOUS_CANDIDATES"
     else:
         status = "CANDIDATES_AVAILABLE"
@@ -215,10 +226,12 @@ def associate_interfaces(
             "source_version": source.version,
             "target_version": target.version,
             "matched_source_count": matched_sources,
+            "ambiguous_source_count": len(ambiguous_sources),
             "min_score": min_score,
             "ambiguity_margin": ambiguity_margin,
             "execution": "not_performed",
         },
+        ambiguous_sources=tuple(ambiguous_sources),
     )
 
 
@@ -242,12 +255,12 @@ def translate_task(
     for step in task.steps:
         source_id = step.source_element_id
         candidates = associations.for_source(source_id) if source_id else ()
-        if len(candidates) == 1:
-            status = "MAPPED"
-        elif len(candidates) > 1:
+        if not candidates:
+            status = "UNAVAILABLE"
+        elif source_id is not None and associations.is_ambiguous(source_id):
             status = "AMBIGUOUS"
         else:
-            status = "UNAVAILABLE"
+            status = "MAPPED"
         translated.append({
             "step_id": step.step_id,
             "intent": step.intent,
