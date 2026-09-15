@@ -1,45 +1,42 @@
 # Integración con X-ANA-X
 
-## Fuente canónica
+## Superficies activas
 
-La integración canónica vive en:
+La rama `PUPILA` de X-ANA-X integra el repositorio independiente en estas
+rutas:
 
-https://github.com/ligereza/X-ANA-X/tree/PUPILA
-
-La rama PUPILA de X-ANA-X contiene el núcleo común y dos superficies:
-
-- PUPILA/assistance: asociación de tareas entre una interfaz conocida y otra
-  por aprender; devuelve candidatos, evidencia y ambigüedad sin ejecutar.
-- PUPILA/visual: geometría, medición y representación perceptual que alimenta
-  la asistencia.
-
-Este repositorio separado conserva principalmente la implementación de
-asistencia. El trabajo visual integrado se mantiene en PUPILA/visual dentro
-de X-ANA-X; no se debe crear aquí otra copia con otro nombre.
-
-## Mapa de ramas
-
-| Rama de este repositorio | Destino en X-ANA-X |
+| PUPILA | X-ANA-X/PUPILA |
 |---|---|
-| main | PUPILA/PUPILA/assistance |
-| fix/ambiguity-consistency | PUPILA/PUPILA/assistance |
+| `src/pupila/` | `PUPILA/assistance/src/pupila/` |
+| `apps/local_assistance/` | `PUPILA/assistance/apps/local_assistance/` |
+| `visual/` | `PUPILA/visual/` |
 
-El núcleo compartido se recibe desde X-ANA-X/core. Una mejora que afecte
-varias superficies debe comenzar en X-ANA-X, no duplicarse aquí.
+La primera ruta contiene asociación analógica y runtime temporal; la segunda
+es una aplicación local de referencia; la tercera contiene geometría y
+medición visual. Cada componente conserva pruebas y límites propios.
 
-## Cómo portar trabajo
+## Dirección y límites
 
-1. Trabajar en la rama de dominio correspondiente.
-2. Ejecutar la prueba local y registrar el commit.
-3. Portar ese commit a X-ANA-X/PUPILA, conservando la procedencia.
-4. Si el cambio modifica el contrato común, portarlo primero a X-ANA-X/main
-   y luego a las ramas consumidoras.
+El trabajo de dominio se conserva primero en este repositorio y luego se porta
+a la rama homóloga de X-ANA-X con procedencia. Las decisiones compartidas de
+X-ANA-X/core se reciben desde X-ANA-X y se propagan a las ramas consumidoras.
 
-No copiar datos privados, caches ni worktrees. No ejecutar acciones sobre la
-aplicación anfitriona: PUPILA produce una propuesta revisable.
+FARMAKSIA mantiene el experimento 090 como evidencia de investigación. El
+runtime PUPILA ya no importa ni necesita ese checkout para ejecutarse. La
+aplicación opcional consume una superficie LUCIDA solo cuando se le entrega
+explícitamente el directorio del adaptador.
 
-## Validación
+La aplicación usa eventos sintéticos y consentimiento explícito; no infiere
+estados mentales, no captura cámara/teclado/puntero, no envía telemetría y no
+ejecuta acciones en la aplicación anfitriona.
 
-Desde la raíz de este repositorio:
+## Ramas
 
-PYTHONPATH=src python -m unittest discover -s tests -v
+| Rama | Destino en X-ANA-X |
+|---|---|
+| `main` | `PUPILA/assistance/` y `PUPILA/visual/` |
+| `fix/ambiguity-consistency` | cambios de asociación hacia `PUPILA/assistance/` |
+
+Antes de portar cambios, verificar Git, ejecutar las pruebas de la superficie
+afectada y conservar el commit de origen. No portar bases SQLite, capturas,
+cachés, worktrees ni trazas reales.

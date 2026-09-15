@@ -1,23 +1,16 @@
-# Procedencia FARMAKSIA -> PUPILA
+# Procedencia FARMAKSIA → PUPILA
 
-## Destino
+El experimento 090 de FARMAKSIA documenta la frontera inicial de señales,
+propuestas y proyección visual. Sus adaptadores reutilizables fueron portados a
+`src/pupila/runtime/`; el prototipo local ya ejecuta esa copia versionada y no
+importa FARMAKSIA ni requiere su ruta en tiempo de ejecución.
 
-La implementación canónica de PUPILA vive en la rama PUPILA de X-ANA-X:
+FARMAKSIA conserva sus experimentos, fixtures y resultados como evidencia de
+investigación. PUPILA conserva el runtime, sus pruebas y la aplicación de
+referencia. Las mejoras futuras del runtime comienzan en PUPILA y se replican
+a `X-ANA-X/PUPILA`; el experimento de origen no es una dependencia de runtime.
 
-https://github.com/ligereza/X-ANA-X/tree/PUPILA
-
-Las rutas activas son PUPILA/assistance y PUPILA/visual.
-
-## Qué recibe PUPILA
-
-Del experimento 090 solo se pueden adoptar contratos de asistencia,
-representaciones acotadas y diffs deterministas de vistas. El estado debe
-seguir siendo local-first, revisable, reversible y sin ejecución de acciones.
-
-No se trasladan a PUPILA los runners de investigación, el transporte XIO,
-los permisos de host, los datos crudos ni una afirmación de comprensión,
-atención o rendimiento.
-
-El experimento 090 permanece en FARMAKSIA como evidencia de origen. Toda
-adopción debe tener un commit propio en PUPILA/X-ANA-X, prueba ejecutable y
-referencia al experimento de origen.
+No se trasladan a PUPILA los runners de investigación, datos privados,
+capturas, resultados no sintéticos ni afirmaciones de comprensión, atención o
+rendimiento humano. Las propuestas siguen siendo locales, revisables y no
+ejecutables.
