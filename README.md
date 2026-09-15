@@ -21,10 +21,26 @@ The first slice is deliberately provider-independent. An agent may supply a
 snapshot or explain a mapping, but PUPILA remains the contract and verifier;
 it is not a chatbot and it never commits an external action.
 
+## Modules
+
+- `src/pupila/`: compares declared interface capabilities and maps a task
+  between a familiar and an unfamiliar surface, retaining ambiguity and
+  evidence per source element.
+- `visual/`: deterministic CPU geometry for supplied visual measurements,
+  including calibration gates, screen-plane intersections and operation
+  context. It does not capture camera frames, run an eye-tracking model or
+  claim physical calibration from synthetic data.
+
+The product direction includes both direct help and analogical transfer. The
+current executable assistance slice is the task-mapping engine; automatic
+detection of a learner becoming stuck, from live application events, is not
+implemented here. Host adapters must supply bounded observations explicitly.
+
 ## Run
 
 ```text
 python -m unittest discover -s tests -v
+PYTHONPATH=visual/src python -m unittest discover -s visual/tests -v
 ```
 
 ## Product boundary
